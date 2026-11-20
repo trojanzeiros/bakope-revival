@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Bakope — Avatar</title>
+<link rel="icon" href="bakope.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e3e7ea;color:#333;font:14px Arial,Helvetica,sans-serif}
+a{color:#0066a6;text-decoration:none}a:hover{text-decoration:underline}
+header{height:52px;background:#f7f7f7;border-bottom:1px solid #bbb;display:flex;align-items:center;padding:0 max(calc((100% - 960px)/2),18px);gap:18px}
+header img{width:112px;max-height:38px;object-fit:contain}
+main{max-width:760px;margin:28px auto;padding:0 14px}
+.panel{background:#fff;border:1px solid #c7cdd1;border-radius:3px;margin-bottom:15px}
+.panel h1{font-size:21px;font-weight:normal;background:#f5f5f5;border-bottom:1px solid #ddd;margin:0;padding:14px 18px}
+.body{padding:20px}
+.identity{display:flex;align-items:center;gap:14px;margin-bottom:20px;overflow-wrap:anywhere}
+.identity img{width:56px;height:56px;object-fit:cover;border:1px solid #ddd}
+.avatars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.avatar{border:1px solid #ddd;padding:16px;text-align:center;background:#fafafa}
+.avatar img{width:min(100%,220px);aspect-ratio:1;object-fit:contain;background:#fff;border:1px solid #ddd}
+.avatar h2{font-size:15px;font-weight:bold;margin:12px 0 0}
+.status{padding:11px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:520px){.avatars{grid-template-columns:1fr}header{padding:0 12px}}
+</style>
+</head>
+<body>
+<header><a href="/"><img src="bakope.png" alt="Bakope"></a><a href="/">Back to Bakope</a></header>
+<main>
+<section class="panel">
+<h1>My Avatar</h1>
+<div class="body">
+<div id="status" class="status" role="status">Loading your Bakope avatar…</div>
+<div id="identity" class="identity" hidden></div>
+<div id="avatars" class="avatars" hidden>
+<div class="avatar"><img id="mainAvatar" alt="Main avatar"><h2>Main avatar</h2></div>
+<div class="avatar"><img id="headshotAvatar" alt="Friends avatar"><h2>Friends avatar / headshot</h2></div>
+</div>
+</div>
+</section>
+</main>
+<script>
+(async()=>{
+ 'use strict';
+ const status=document.getElementById('status');
+ const identity=document.getElementById('identity');
+ const avatars=document.getElementById('avatars');
+ const fallbackMain='https://tcdn.octane.wtf/1e22bf0f41ac684d7ac84346a7c907a6f626f692bb9d7c26f0250b8464cee79a_thumbnail.png';
+ const fallbackHead='https://tcdn.octane.wtf/1e22bf0f41ac684d7ac84346a7c907a6f626f692bb9d7c26f0250b8464cee79a_headshot2.png';
+ try{
+  const response=await fetch('/api/config',{cache:'no-store'});
+  if(!response.ok)throw new Error('Could not load /api/config (HTTP '+response.status+').');
+  const config=await response.json();
+  if(!config.supabaseUrl||!config.supabaseKey)throw new Error('Supabase URL or publishable key is missing in server.py.');
+  if(!window.supabase||typeof window.supabase.createClient!=='function')throw new Error('Supabase JS library failed to load.');
+  const db=window.supabase.createClient(config.supabaseUrl,config.supabaseKey,{
+   auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+  });
+  const {data:{session},error:sessionError}=await db.auth.getSession();
+  if(sessionError)throw sessionError;
+  if(!session){
+   status.textContent='You are not logged in. Sign in on the Bakope home page first.';
+   return;
+  }
+  const {data:profile,error}=await db.from('profiles')
+   .select('username,avatar_url,avatar_headshot_url')
+   .eq('id',session.user.id).maybeSingle();
+  if(error)throw error;
+  if(!profile){
+   status.textContent='Your Bakope profile could not be found.';
+   return;
+  }
+  const mainUrl=profile.avatar_url||fallbackMain;
+  const headUrl=profile.avatar_headshot_url||fallbackHead;
+  const picture=document.createElement('img');
+  picture.src=headUrl;picture.alt='Your profile picture';
+  const name=document.createElement('strong');
+  name.textContent=profile.username;
+  identity.append(picture,name);
+  identity.hidden=false;
+  document.getElementById('mainAvatar').src=mainUrl;
+  document.getElementById('headshotAvatar').src=headUrl;
+  avatars.hidden=false;
+  status.textContent='Your Bakope avatar information is loaded.';
+ }catch(error){
+  console.error(error);
+  status.textContent='Could not load your avatar: '+(error.message||error)+' Check server.py and your Supabase configuration.';
+ }
+})();
+</script>
+</body>
+</html>
