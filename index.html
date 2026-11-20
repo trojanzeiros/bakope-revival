@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Bakope — Home</title><link rel="icon" href="bakope.png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--blue:#00a2ff;--bg:#e3e7ea;--line:#c7cdd1;--text:#333}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Arial,Helvetica,sans-serif}
+a{color:#0066a6;text-decoration:none}a:hover{text-decoration:underline}
+.top{height:52px;background:#f7f7f7;border-bottom:1px solid #bbb;display:flex;align-items:center;padding:0 max(calc((100% - 1180px)/2),18px);gap:28px;position:sticky;top:0;z-index:5}
+.brand img{width:112px;max-height:38px;object-fit:contain}.nav{display:flex;gap:25px;font-weight:bold}.nav a{color:#555}.topright{margin-left:auto;display:flex;align-items:center;gap:12px}
+.smallbtn,.btn{border:1px solid #aaa;border-radius:3px;padding:8px 13px;background:linear-gradient(#fff,#e7e7e7);color:#333;cursor:pointer;font-weight:bold}.btn.primary{background:linear-gradient(#19b7ff,#008bd4);border-color:#0079bd;color:white}.btn.danger{background:#b83232;color:white;border-color:#9d2222}.btn:disabled{opacity:.5;cursor:not-allowed}
+.layout{max-width:1180px;margin:22px auto;display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px;padding:0 12px}
+.sidebar,.panel{background:#fff;border:1px solid var(--line);border-radius:3px}.sidebar{padding:12px 0;height:max-content}.sideuser{padding:8px 13px 14px;border-bottom:1px solid #ddd;margin-bottom:8px;display:flex;gap:10px;align-items:center;overflow-wrap:anywhere}.sideuser img{width:42px;height:42px;border-radius:3px}
+.side-links a{display:block;padding:9px 15px;color:#444}.side-links a:hover{background:#eee;text-decoration:none}.side-links a.active{font-weight:bold;color:#0077b9;background:#eaf6fd}
+.content{min-width:0}.welcome{background:#fff;border:1px solid var(--line);padding:16px 20px;margin-bottom:15px}.welcome h1{font-size:22px;font-weight:normal;margin:0 0 7px}.welcome p{margin:0;color:#666}
+.panel{margin-bottom:15px}.panelhead{padding:11px 15px;background:#f5f5f5;border-bottom:1px solid #ddd;font-weight:bold}.panelbody{padding:16px}.hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.hero img{width:180px;height:120px;object-fit:contain}.hero h2{font-size:22px;margin:0 0 8px}.hero p{color:#666;max-width:520px;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}.friend{border:1px solid #ddd;padding:10px;text-align:center;border-radius:3px;background:#fff;overflow-wrap:anywhere}.friend img{width:80px;height:80px;object-fit:cover;display:block;margin:0 auto 8px}
+.muted{color:#777}.authwrap{max-width:430px;margin:55px auto;padding:0 14px}.authbox{background:#fff;border:1px solid #c8cdd1;border-radius:3px}.authbox h1{font-size:22px;font-weight:normal;background:#f5f5f5;border-bottom:1px solid #ddd;margin:0;padding:15px 20px}.authform{padding:20px}
+.field{margin-bottom:14px}.field label{display:block;font-weight:bold;margin-bottom:6px}.field input,.field textarea{width:100%;padding:10px;border:1px solid #aaa;border-radius:3px;font-size:15px}.field input:focus,.field textarea:focus{outline:2px solid #9bd8fa;border-color:#008bd4}.hint{font-size:12px;color:#777;margin-top:5px}
+.message{padding:10px;border-radius:3px;margin-bottom:13px;display:none;line-height:1.4}.message.error{display:block;background:#fff0f0;border:1px solid #e3aaaa;color:#9b2222}.message.success{display:block;background:#effbef;border:1px solid #a9d8a9;color:#276b27}
+.authswitch{text-align:center;margin-top:16px}.footer{text-align:center;color:#777;font-size:12px;border-top:1px solid #c9ced2;padding:22px 10px;margin-top:35px}
+.hidden{display:none!important}.profilehead{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.profilehead img{width:150px;height:150px;object-fit:contain;border:1px solid #ddd}.profilehead h2{margin:0 0 6px;font-weight:normal}
+.game-shell{position:relative;background:#111;border:1px solid #333;min-height:520px;overflow:hidden}.game-shell canvas{display:block;width:100%;height:520px}.game-hud{position:absolute;left:12px;top:12px;background:#111c;color:#fff;padding:10px 12px;border-radius:5px;font-size:12px;pointer-events:none}.game-help{padding:10px;background:#f5f5f5;border:1px solid #ddd;line-height:1.6}.executor{margin-top:12px;background:#15191f;color:#e7edf5;padding:12px;border-radius:5px}.executor input{width:min(100%,600px);padding:10px;background:#080b10;color:#8fffa1;border:1px solid #46515f;font-family:monospace}.executor button{margin-left:6px}.member-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid #eee;padding:10px 0}.member-row img{width:48px;height:48px;object-fit:cover}.member-row .member-name{flex:1;overflow-wrap:anywhere}.tag{font-size:11px;background:#e8f4fb;padding:3px 6px;border-radius:3px}
+@media(max-width:700px){.game-shell,.game-shell canvas{min-height:420px;height:420px}.top{gap:12px;padding:0 10px}.nav{gap:10px;font-size:12px}.brand img{width:82px}.layout{grid-template-columns:1fr;margin-top:12px}.sidebar{display:none}.topright .smallbtn{padding:6px}.hero img{width:130px}.authwrap{margin:25px auto}}
+</style></head>
+<body>
+<header class="top">
+ <a class="brand" href="#" data-page="home"><img src="bakope.png" alt="Bakope"></a>
+ <nav class="nav"><a href="#" data-page="home">Home</a><a href="#" data-page="discover">Discover</a><a href="#" data-page="avatar">Avatar</a><a href="#" data-page="game">Play</a></nav>
+ <div class="topright" id="topright"></div>
+</header>
+<div id="auth" class="authwrap hidden"><section class="authbox">
+ <h1 id="authTitle">Create an Account</h1><form class="authform" id="authForm" autocomplete="on">
+ <div id="formMessage" class="message" role="status" aria-live="polite"></div>
+ <div class="field"><label for="username">Username</label><input id="username" name="username" maxlength="20" minlength="3" autocomplete="username" required pattern="[A-Za-z0-9_]+" autocapitalize="none" spellcheck="false"><div class="hint">3–20 characters. Letters, numbers and underscore only. No spaces.</div></div>
+ <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" minlength="8" maxlength="72" autocomplete="current-password" required><div class="hint" id="passwordHint">Use at least 8 characters.</div></div>
+ <button class="btn primary" id="authSubmit" type="submit" style="width:100%">Create Account</button><div class="authswitch" id="authSwitch"></div>
+ </form></section></div>
+<div class="layout" id="app">
+ <aside class="sidebar"><div class="sideuser"><img id="sideAvatar" alt="Avatar"><strong id="sideName">Guest #00000</strong></div>
+ <nav class="side-links"><a href="#" data-page="home">⌂ &nbsp; Home</a><a href="#" data-page="profile">♙ &nbsp; Profile</a><a href="#" data-page="friends">♧ &nbsp; Friends</a><a href="#" data-page="avatar">◈ &nbsp; Avatar</a><a href="#" data-page="discover">▦ &nbsp; Discover</a><a href="#" data-page="game">🎮 &nbsp; Play</a><a href="#" data-page="admin" id="adminNav" class="hidden">⚙ &nbsp; Admin</a></nav></aside>
+ <main class="content" id="content"></main>
+</div>
+<footer class="footer">© 2026 Bakope. An independent community project, not affiliated with Roblox Corporation.</footer>
+<script>
+(async () => {
+'use strict';
+const HEADSHOT='https://tcdn.octane.wtf/1e22bf0f41ac684d7ac84346a7c907a6f626f692bb9d7c26f0250b8464cee79a_headshot2.png';
+const THUMBNAIL='https://tcdn.octane.wtf/1e22bf0f41ac684d7ac84346a7c907a6f626f692bb9d7c26f0250b8464cee79a_thumbnail.png';
+let db;
+try {
+ const configResponse = await fetch('/api/config', { cache: 'no-store' });
+ if (!configResponse.ok) throw new Error('Could not load /api/config (HTTP ' + configResponse.status + ').');
+ const config = await configResponse.json();
+ if (!config.supabaseUrl || !config.supabaseKey) throw new Error('Supabase URL or publishable key is missing in server.py.');
+ if (!window.supabase || typeof window.supabase.createClient !== 'function') throw new Error('Supabase JS library failed to load.');
+ db = window.supabase.createClient(config.supabaseUrl, config.supabaseKey, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+ });
+} catch (error) {
+ console.error(error);
+ document.getElementById('content').textContent = 'Bakope could not start: ' + (error.message || error) + ' Check your server.py Supabase settings and restart the server.';
+ throw error;
+}
+const $=id=>document.getElementById(id);
+const guestNumber=String(Math.floor(10000+Math.random()*90000));
+const guestName='Guest #'+guestNumber;
+const avatarOf=u=>u&&u.avatar_url||THUMBNAIL;
+const headshotOf=u=>u&&u.avatar_headshot_url||HEADSHOT;
+let currentUser=null,authMode='signup',alertChannel=null,profileChannel=null,activePage='home',gameCleanup=null;
+const validUsername=v=>/^[A-Za-z0-9_]{3,20}$/.test(v);
+const internalEmail=u=>u.toLowerCase()+'@accounts.bakope.invalid';
+function showMessage(text,type='error'){const e=$('formMessage');e.textContent=String(text);e.className='message '+type}
+function clearMessage(){const e=$('formMessage');e.textContent='';e.className='message'}
+function showAuth(mode){authMode=mode;$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('authTitle').textContent=mode==='signup'?'Create an Account':'Login';$('authSubmit').textContent=mode==='signup'?'Create Account':'Login';$('passwordHint').textContent=mode==='signup'?'Use at least 8 characters.':'Enter your password.';$('password').autocomplete=mode==='signup'?'new-password':'current-password';$('authSwitch').replaceChildren(document.createTextNode(mode==='signup'?'Already have an account? ':'Need an account? '));const a=document.createElement('a');a.href='#';a.dataset.page=mode==='signup'?'login':'signup';a.textContent=mode==='signup'?'Login':'Sign Up';$('authSwitch').append(a);clearMessage()}
+function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden')}
+function panel(title,content){const s=document.createElement('section');s.className='panel';const h=document.createElement('div');h.className='panelhead';h.textContent=title;const b=document.createElement('div');b.className='panelbody';if(content instanceof Node)b.append(content);else b.textContent=String(content);s.append(h,b);$('content').append(s);return b}
+function updateHeader(){
+ const top=$('topright');top.replaceChildren();
+ if(currentUser){const name=document.createElement('span');name.textContent='Hello, '+currentUser.username;const prof=document.createElement('button');prof.className='smallbtn';prof.textContent='Profile';prof.dataset.page='profile';const out=document.createElement('button');out.className='smallbtn';out.textContent='Logout';out.id='logout';top.append(name,prof,out);$('sideName').textContent=currentUser.username;$('adminNav').classList.toggle('hidden',!['owner','admin'].includes(currentUser.role));}
+ else{const guest=document.createElement('span');guest.textContent=guestName;const l=document.createElement('button');l.className='smallbtn';l.textContent='Login';l.dataset.page='login';const s=document.createElement('button');s.className='btn primary';s.textContent='Sign Up';s.dataset.page='signup';top.append(guest,l,s);$('sideName').textContent=guestName;$('adminNav').classList.add('hidden');}
+ $('sideAvatar').src=currentUser?headshotOf(currentUser):HEADSHOT;$('sideAvatar').onerror=()=>{$('sideAvatar').onerror=null;$('sideAvatar').src=HEADSHOT};
+}
+async function loadProfile(id){const {data,error}=await db.from('profiles').select('id,username,role,created_at,avatar_url,avatar_headshot_url').eq('id',id).maybeSingle();if(error)throw error;return data}
+async function refreshSession(){const {data:{session},error}=await db.auth.getSession();if(error)throw error;if(!session){currentUser=null;updateHeader();return}const p=await loadProfile(session.user.id);currentUser=p?{id:p.id,username:p.username,role:p.role||'member',avatar_url:p.avatar_url,avatar_headshot_url:p.avatar_headshot_url}:null;updateHeader()}
+async function register(username,password){
+ const {data:existing,error:check}=await db.from('profiles').select('id').ilike('username',username).maybeSingle();
+ if(check)throw check;if(existing)throw new Error('This username is already taken.');
+ const {data,error}=await db.auth.signUp({email:internalEmail(username),password,options:{data:{username}}});
+ if(error)throw error;
+ if(!data.session||!data.user)throw new Error('Account created, but email confirmation is enabled. Disable Confirm email in Supabase Authentication settings.');
+ const {error:insertError}=await db.from('profiles').insert({id:data.user.id,username,role:'member',avatar_url:THUMBNAIL,avatar_headshot_url:HEADSHOT});
+ if(insertError){await db.auth.signOut();if(insertError.code==='23505')throw new Error('This username is already taken.');throw insertError}
+ currentUser={id:data.user.id,username,role:'member',avatar_url:THUMBNAIL,avatar_headshot_url:HEADSHOT};updateHeader();showApp();renderPage('home');
+}
+async function login(username,password){
+ const {data,error}=await db.auth.signInWithPassword({email:internalEmail(username),password});
+ if(error)throw new Error('Incorrect username or password.');
+ const p=await loadProfile(data.user.id);if(!p)throw new Error('Account profile not found. Ask the site owner for help.');
+ currentUser={id:p.id,username:p.username,role:p.role||'member',avatar_url:p.avatar_url,avatar_headshot_url:p.avatar_headshot_url};updateHeader();showApp();renderPage('home');
+}
+$('authForm').addEventListener('submit',async e=>{
+ e.preventDefault();clearMessage();const username=$('username').value.trim(),password=$('password').value;
+ if(!validUsername(username)){showMessage('Username must be 3–20 characters and use only letters, numbers or underscores. Spaces are not allowed.');return}
+ if(password.length<8||password.length>72){showMessage('Password must contain 8–72 characters.');return}
+ const btn=$('authSubmit');btn.disabled=true;btn.textContent='Please wait...';
+ try{if(authMode==='signup')await register(username,password);else await login(username,password)}
+ catch(err){console.error(err);const msg=String(err.message||'Request failed');showMessage(/invalid api key/i.test(msg)?'Supabase rejected the publishable API key. Check the URL and key configured in server.py.':'Error: '+msg)}
+ finally{btn.disabled=false;btn.textContent=authMode==='signup'?'Create Account':'Login'}
+});
+function subscribeAnnouncements(){
+ if(alertChannel)return;
+ alertChannel=db.channel('site-announcements').on('postgres_changes',{event:'INSERT',schema:'public',table:'announcements'},payload=>{
+   const text=payload.new&&payload.new.message;
+   if(typeof text==='string'&&text.length)window.alert(text);
+ }).subscribe();
+}
+function subscribeProfileChanges(){
+ if(profileChannel)return;
+ profileChannel=db.channel('bakope-profile-sync').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},payload=>{
+  const row=payload.new;
+  if(!row)return;
+  if(currentUser&&row.id===currentUser.id){currentUser={...currentUser,...row};updateHeader();}
+  if(activePage==='profile'&&currentUser&&row.id===currentUser.id)renderPage('profile');
+  if(activePage==='friends'||activePage==='admin')renderPage(activePage);
+ }).subscribe();
+}
+function addOwnerAvatarEditor(container, profiles){
+ const box=document.createElement('section');box.className='executor';
+ const title=document.createElement('h3');title.textContent='Owner · Profile CDN manager';
+ const note=document.createElement('p');note.textContent='Update a member avatar. Uploads are stored in Supabase Storage and the public URLs are saved in profiles.';
+ const select=document.createElement('select');select.style.cssText='display:block;width:100%;max-width:420px;padding:9px;margin:8px 0';
+ profiles.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.username;select.append(o)});
+ const main=document.createElement('input');main.type='file';main.accept='image/png,image/jpeg,image/webp,image/gif';main.style.display='block';main.style.margin='8px 0';
+ const head=document.createElement('input');head.type='file';head.accept='image/png,image/jpeg,image/webp,image/gif';head.style.display='block';head.style.margin='8px 0';
+ const save=document.createElement('button');save.className='btn primary';save.textContent='Upload and update avatar';
+ const status=document.createElement('p');status.textContent='Main image: 1st file · Friends/headshot: 2nd file';
+ save.addEventListener('click',async()=>{
+  if(!currentUser||currentUser.username.toLowerCase()!=='watcha'){status.textContent='Only Watcha can use this tool.';return;}
+  const target=profiles.find(x=>x.id===select.value);if(!target){status.textContent='Select a member.';return;}
+  if(!main.files[0]&&!head.files[0]){status.textContent='Choose at least one image.';return;}
+  save.disabled=true;status.textContent='Uploading to Supabase Storage…';
+  try{
+   const changes={};
+   for(const [file,field,suffix] of [[main.files[0],'avatar_url','main'],[head.files[0],'avatar_headshot_url','headshot']]){
+    if(!file)continue;
+    if(file.size>5*1024*1024)throw new Error('Each image must be 5 MB or smaller.');
+    const ext=(file.name.split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'')||'png';
+    const path=`${target.id}/${suffix}-${Date.now()}.${ext}`;
+    const {error:upErr}=await db.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type||'image/png'});
+    if(upErr)throw upErr;
+    changes[field]=db.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+   }
+   const {error}=await db.from('profiles').update(changes).eq('id',target.id);
+   if(error)throw error;
+   status.textContent='Avatar updated. Realtime profile sync will refresh connected clients.';main.value='';head.value='';
+  }catch(err){status.textContent='Update failed: '+(err.message||err)}finally{save.disabled=false;}
+ });
+ box.append(title,note,select,document.createTextNode('Main avatar'),main,document.createTextNode('Friends avatar / headshot'),head,save,status);container.append(box);
+}
+async function renderGame(){
+ if(gameCleanup){gameCleanup();gameCleanup=null;}
+ if(!currentUser){panel('Bakope Game','Sign in to join the multiplayer game.');return;}
+ const wrap=document.createElement('div');
+ const shell=document.createElement('div');shell.className='game-shell';shell.id='bakopeGame';
+ const hud=document.createElement('div');hud.className='game-hud';hud.textContent='WASD: move · Space: jump · Mouse: camera · Click game to capture mouse';shell.append(hud);
+ wrap.append(shell);panel('Bakope 3D · Multiplayer',wrap);
+ const help=document.createElement('div');help.className='game-help';help.textContent='A small 3D social lobby. Your position and other players are synchronized through Supabase Realtime. Sign in is required.';panel('Controls',help);
+ if(currentUser.username.toLowerCase()==='watcha'){
+  const exec=document.createElement('div');exec.className='executor';const h=document.createElement('b');h.textContent='BAKOPE ADMIN CONSOLE · WATCHA ONLY';const input=document.createElement('input');input.placeholder='alert Hello everyone!  |  party  |  fly on  |  fly off';const run=document.createElement('button');run.className='btn primary';run.textContent='Run command';const output=document.createElement('p');output.textContent='Allowed: alert <message>, party, fly on, fly off. Arbitrary JavaScript is intentionally disabled.';
+  async function sendCommand(){const raw=input.value.trim();if(!raw)return;const [cmd,...rest]=raw.split(' ');const arg=rest.join(' ');let type,payload={};if(cmd==='alert'&&arg){type='alert';payload.message=arg.slice(0,300)}else if(cmd==='party'){type='party'}else if(cmd==='fly'&&['on','off'].includes(arg)){type='fly';payload.enabled=arg==='on'}else{output.textContent='Unknown command. Use alert <message>, party, fly on, or fly off.';return}run.disabled=true;const {error}=await db.from('game_events').insert({type,payload,created_by:currentUser.id});run.disabled=false;if(error)output.textContent='Command failed: '+error.message;else{output.textContent='Command sent to all connected players.';input.value=''}}
+  run.addEventListener('click',sendCommand);input.addEventListener('keydown',e=>{if(e.key==='Enter')sendCommand()});exec.append(h,document.createElement('br'),input,run,output);panel('Owner executor',exec);
+ }
+ try{
+  const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+  const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(shell.clientWidth,shell.clientHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;shell.append(renderer.domElement);
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x91c9ef);scene.fog=new THREE.Fog(0x91c9ef,45,120);
+  const camera=new THREE.PerspectiveCamera(65,shell.clientWidth/shell.clientHeight,.1,300);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x70865d,2));const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-20,35,15);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({color:0x70a95a,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+  const mat=(color,roughness=.85)=>new THREE.MeshStandardMaterial({color,roughness});
+  const grass=mat(0x4e8f48),wood=mat(0x795033),leaf=mat(0x2f873d),skin=mat(0xe0b28c),shirt=mat(0x1677c8),pants=mat(0x263c68),shoe=mat(0x252525);
+  const box=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o};
+  // Spawn plaza and low-poly scenery
+  box(18,.35,18,mat(0x999999),0,.15,0);
+  for(let i=0;i<26;i++){const x=Math.sin(i*12.31)*42,z=Math.cos(i*7.17)*42;const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.28,.42,2.4,8),wood);trunk.position.set(x,1.2,z);trunk.castShadow=true;scene.add(trunk);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.55,12,10),leaf);crown.position.set(x,3,z);crown.castShadow=true;scene.add(crown)}
+  // Rounded articulated humanoid rig, with walk/jump animation
+  function makeAvatar(color=0x1677c8){const root=new THREE.Group();const shirtM=mat(color),skinM=skin,pantsM=pants;const sphere=(r,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r,20,16),m);o.position.set(x,y,z);o.castShadow=true;root.add(o);return o};const capsule=(r,len,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.CapsuleGeometry(r,len,6,12),m);o.position.set(x,y,z);o.castShadow=true;root.add(o);return o};
+   capsule(.43,.72,shirtM,0,1.55,0);sphere(.31,skinM,0,2.25,0);
+   const leftArm=new THREE.Group(),rightArm=new THREE.Group(),leftLeg=new THREE.Group(),rightLeg=new THREE.Group();
+   function limb(group,r,len,m,x,y){group.position.set(x,y,0);const mesh=new THREE.Mesh(new THREE.CapsuleGeometry(r,len,6,12),m);mesh.position.y=-len*.25;mesh.castShadow=true;group.add(mesh);root.add(group);return group}
+   limb(leftArm,.14,.62,skinM,-.55,1.88);limb(rightArm,.14,.62,skinM,.55,1.88);limb(leftLeg,.19,.68,pantsM,-.23,.82);limb(rightLeg,.19,.68,pantsM,.23,.82);
+   capsule(.17,.18,shoe,-.23,.22,.02);capsule(.17,.18,shoe,.23,.22,.02);
+   return {root,leftArm,rightArm,leftLeg,rightLeg};}
+  const myRig=makeAvatar();scene.add(myRig.root);const others=new Map();const keys={};let yaw=0,pitch=.25,vy=0,onGround=true,fly=false,party=false,lastWrite=0,disposed=false;
+  const pos={x:0,y:0,z:0};const remoteIds=new Set();
+  const keydown=e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault()};const keyup=e=>{keys[e.code]=false};const click=()=>renderer.domElement.requestPointerLock?.();const mouse=e=>{if(document.pointerLockElement===renderer.domElement){yaw-=e.movementX*.0025;pitch=Math.max(-.15,Math.min(.8,pitch+e.movementY*.002))}};
+  window.addEventListener('keydown',keydown);window.addEventListener('keyup',keyup);renderer.domElement.addEventListener('click',click);document.addEventListener('mousemove',mouse);
+  function applyEvent(ev){const p=ev.payload||{};if(ev.type==='alert'&&typeof p.message==='string')window.alert(p.message);if(ev.type==='party'){party=!party;scene.background=new THREE.Color(party?0x4b347e:0x91c9ef);ground.material.color.set(party?0x7b4c9b:0x70a95a)}if(ev.type==='fly'&&typeof p.enabled==='boolean'){fly=p.enabled;if(!fly)pos.y=0;}}
+  const eventChannel=db.channel('bakope-game-events').on('postgres_changes',{event:'INSERT',schema:'public',table:'game_events'},payload=>applyEvent(payload.new)).subscribe();
+  const playerChannel=db.channel('bakope-game-players').on('postgres_changes',{event:'*',schema:'public',table:'game_players'},payload=>{const row=payload.new;if(!row||row.user_id===currentUser.id)return;let rig=others.get(row.user_id);if(!rig){rig=makeAvatar(0x36a9a0);scene.add(rig.root);others.set(row.user_id,rig)}rig.root.position.set(Number(row.x)||0,0,Number(row.z)||0);rig.root.rotation.y=Number(row.rot)||0;remoteIds.add(row.user_id)}).subscribe();
+  const {data:initial}=await db.from('game_players').select('user_id,username,x,z,rot').limit(80);(initial||[]).forEach(row=>{if(row.user_id===currentUser.id)return;const rig=makeAvatar(0x36a9a0);rig.root.position.set(Number(row.x)||0,0,Number(row.z)||0);rig.root.rotation.y=Number(row.rot)||0;scene.add(rig.root);others.set(row.user_id,rig)});
+  const {data:events}=await db.from('game_events').select('type,payload,created_by,created_at').order('created_at',{ascending:false}).limit(1);if(events&&events[0]&&events[0].type==='party'){};
+  let previous=performance.now();let frame=0;
+  function animate(now){if(disposed)return;requestAnimationFrame(animate);const dt=Math.min((now-previous)/1000,.05);previous=now;const moving=keys.KeyW||keys.KeyS||keys.KeyA||keys.KeyD;const forward=(keys.KeyW?1:0)-(keys.KeyS?1:0),side=(keys.KeyD?1:0)-(keys.KeyA?1:0);const speed=fly?9:6;const dx=(-Math.sin(yaw)*forward+Math.cos(yaw)*side)*speed*dt,dz=(-Math.cos(yaw)*forward-Math.sin(yaw)*side)*speed*dt;pos.x+=dx;pos.z+=dz;
+   if(fly){if(keys.Space)pos.y+=speed*dt;if(keys.ShiftLeft||keys.ShiftRight)pos.y-=speed*dt;pos.y=Math.max(0,Math.min(30,pos.y))}else{if(keys.Space&&onGround){vy=7;onGround=false}vy-=18*dt;pos.y+=vy*dt;if(pos.y<=0){pos.y=0;vy=0;onGround=true}}
+   myRig.root.position.set(pos.x,pos.y, pos.z);if(moving)myRig.root.rotation.y=yaw+Math.atan2(side,forward);const swing=moving?Math.sin(now*.012)*.65:0;myRig.leftArm.rotation.x=swing;myRig.rightArm.rotation.x=-swing;myRig.leftLeg.rotation.x=-swing;myRig.rightLeg.rotation.x=swing;
+   const target=new THREE.Vector3(pos.x,pos.y+1.4,pos.z);const distance=7;camera.position.set(pos.x+Math.sin(yaw)*distance, pos.y+3.2+pitch*3, pos.z+Math.cos(yaw)*distance);camera.lookAt(target);
+   renderer.render(scene,camera);frame++;if(now-lastWrite>850){lastWrite=now;db.from('game_players').upsert({user_id:currentUser.id,username:currentUser.username,x:pos.x,z:pos.z,rot:yaw,updated_at:new Date().toISOString()},{onConflict:'user_id'}).then(()=>{}).catch(()=>{})}
+  }
+  requestAnimationFrame(animate);
+  const resize=()=>{if(disposed)return;const w=shell.clientWidth,h=shell.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)};const observer=new ResizeObserver(resize);observer.observe(shell);
+  gameCleanup=()=>{disposed=true;observer.disconnect();window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);renderer.domElement.removeEventListener('click',click);document.removeEventListener('mousemove',mouse);db.removeChannel(eventChannel);db.removeChannel(playerChannel);document.exitPointerLock?.();renderer.dispose();};
+ }catch(err){console.error(err);const msg=document.createElement('p');msg.textContent='Could not start the 3D game: '+(err.message||err);shell.replaceChildren(msg)}
+}
+async function renderPage(page){
+ activePage=page;if(gameCleanup&&page!=='game'){gameCleanup();gameCleanup=null;}
+ showApp();const c=$('content');c.replaceChildren();
+ if(page==='game'){await renderGame();return;}
+ if(page==='home'){
+  const w=document.createElement('section');w.className='welcome';const h=document.createElement('h1');h.textContent=currentUser?'Welcome back, '+currentUser.username+'!':'Welcome to Bakope!';const p=document.createElement('p');p.textContent=currentUser?'You are signed in.':'You are visiting as '+guestName+'. Create an account to join the community.';w.append(h,p);c.append(w);
+  const hero=document.createElement('div');hero.className='hero';const logo=document.createElement('img');logo.src='bakope.png';logo.alt='Bakope logo';const d=document.createElement('div');const h2=document.createElement('h2');h2.textContent='Play. Create. Share.';const desc=document.createElement('p');desc.textContent='A classic block-building community revival.';d.append(h2,desc);hero.append(logo,d);panel('Home',hero);
+  if(currentUser)panel('Your account','Logged in as '+currentUser.username+'.');return;
+ }
+ if(page==='profile'){
+  if(!currentUser){panel('Profile','Sign in to view your profile.');return}
+  const wrap=document.createElement('div');wrap.className='profilehead';const img=document.createElement('img');img.src=avatarOf(currentUser);img.alt='Your avatar';const info=document.createElement('div');const h=document.createElement('h2');h.textContent=currentUser.username;const p=document.createElement('p');p.className='muted';p.textContent=currentUser.role==='owner'?'Site owner':currentUser.role==='admin'?'Administrator':'Bakope member';info.append(h,p);wrap.append(img,info);panel('Profile',wrap);return;
+ }
+ if(page==='avatar'){const wrap=document.createElement('div');wrap.className='profilehead';const img=document.createElement('img');img.src=currentUser?avatarOf(currentUser):THUMBNAIL;img.alt='Main avatar';const friendImg=document.createElement('img');friendImg.src=currentUser?headshotOf(currentUser):HEADSHOT;friendImg.alt='Friends avatar';const info=document.createElement('div');const p=document.createElement('p');p.textContent=currentUser?'Your Bakope avatars.':'Default Bakope avatars.';const mainLabel=document.createElement('p');mainLabel.textContent='Main avatar';const friendLabel=document.createElement('p');friendLabel.textContent='Friends avatar';info.append(p,mainLabel,friendLabel);wrap.append(img,friendImg,info);panel('Avatar',wrap);return}
+ if(page==='discover'){panel('Discover','The games directory is not connected yet.');return}
+ if(page==='friends'){
+  if(!currentUser){panel('Friends','Sign in to see community members.');return}
+  const {data,error}=await db.from('profiles').select('id,username,role,avatar_url,avatar_headshot_url').neq('id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+  if(error){panel('Friends','Could not load members: '+error.message);return}
+  if(!data.length){panel('Friends','No other members yet.');return}
+  const grid=document.createElement('div');grid.className='grid';data.forEach(u=>{const card=document.createElement('div');card.className='friend';const img=document.createElement('img');img.src=headshotOf(u);img.alt='Avatar';const a=document.createElement('a');a.href='#';a.textContent=u.username;a.addEventListener('click',ev=>{ev.preventDefault();renderMemberProfile(u.username)});card.append(img,a);grid.append(card)});panel('Friends & Members',grid);return;
+ }
+ if(page==='admin'){
+  if(!currentUser||!['owner','admin'].includes(currentUser.role)){panel('Admin','You do not have permission to access this page.');return}
+  const note=document.createElement('p');note.textContent='Administrative tools. Actions are checked again by Supabase Row Level Security.';panel('Site administration',note);
+  const form=document.createElement('div');const label=document.createElement('label');label.textContent='Announcement to all visitors';label.htmlFor='announcementText';const ta=document.createElement('textarea');ta.id='announcementText';ta.maxLength=500;ta.rows=3;ta.style.width='100%';ta.style.margin='8px 0';const send=document.createElement('button');send.className='btn primary';send.textContent='Send alert to everyone';send.addEventListener('click',async()=>{const value=ta.value.trim();if(!value){window.alert('Write a message first.');return}send.disabled=true;const {error}=await db.from('announcements').insert({message:value,created_by:currentUser.id});send.disabled=false;if(error)window.alert('Could not send: '+error.message);else{ta.value='';window.alert('Announcement sent.')}});form.append(label,ta,send);panel('Broadcast alert',form);
+  const {data,error}=await db.from('profiles').select('id,username,role,avatar_url,avatar_headshot_url').order('created_at',{ascending:false}).limit(100);
+  if(error){panel('Accounts','Could not load accounts: '+error.message);return}
+  if(currentUser.username.toLowerCase()==='watcha')addOwnerAvatarEditor(c,data);
+  const list=document.createElement('div');
+  data.forEach(u=>{const row=document.createElement('div');row.className='member-row';const im=document.createElement('img');im.src=headshotOf(u);im.alt='Avatar for '+u.username;const nm=document.createElement('span');nm.className='member-name';nm.textContent=u.username;const role=document.createElement('span');role.className='tag';role.textContent=u.role||'member';row.append(im,nm,role);
+   if(u.id!==currentUser.id&&!(u.role==='owner')&&(currentUser.role==='owner'||u.role!=='admin')){const del=document.createElement('button');del.className='btn danger';del.textContent='Delete account';del.addEventListener('click',async()=>{if(!window.confirm('Delete the account '+u.username+' permanently?'))return;del.disabled=true;const {error:delError}=await db.rpc('admin_delete_account',{target_user_id:u.id});if(delError){del.disabled=false;window.alert('Could not delete account: '+delError.message)}else{row.remove()}});row.append(del)}
+   list.append(row);
+  });panel('Accounts',list);return;
+ }
+}
+async function renderMemberProfile(username){const {data,error}=await db.from('profiles').select('username,role,avatar_url,avatar_headshot_url').eq('username',username).maybeSingle();if(error||!data)return;const c=$('content');c.replaceChildren();const wrap=document.createElement('div');wrap.className='profilehead';const img=document.createElement('img');img.src=avatarOf(data);img.alt='Avatar';const info=document.createElement('div');const h=document.createElement('h2');h.textContent=data.username;const p=document.createElement('p');p.className='muted';p.textContent=data.role==='owner'?'Site owner':data.role==='admin'?'Administrator':'Bakope member';info.append(h,p);wrap.append(img,info);panel('Profile',wrap)}
+document.addEventListener('click',async e=>{const target=e.target.closest('[data-page]');if(target){e.preventDefault();const page=target.dataset.page;if(page==='login'||page==='signup')showAuth(page);else renderPage(page)}if(e.target.closest('#logout')){await db.auth.signOut();currentUser=null;updateHeader();renderPage('home')}});
+db.auth.onAuthStateChange(()=>{refreshSession().catch(console.error)});
+subscribeAnnouncements();
+subscribeProfileChanges();
+refreshSession().then(()=>renderPage('home')).catch(err=>{console.error(err);updateHeader();renderPage('home')});
+})();
+</script></body></html>
